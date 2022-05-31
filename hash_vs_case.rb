@@ -98,8 +98,11 @@ end
 Benchmark.bmbm(&bench)
 
 #                         user       system     total      real
-# simple_find_with_hash   0.236148   0.000654   0.236802   (0.236831)
-# simple_find_with_case   0.233312   0.000627   0.233939   (0.233974)
+# simple_find_with_hash   0.236148   0.000654   0.236802   (0.236831) # (with 4 items)
+# simple_find_with_case   0.233312   0.000627   0.233939   (0.233974) # (with 4 items)
+# simple_find_with_hash   0.210860   0.001958   0.212818   (0.212885) # (with 10 items)
+# simple_find_with_case   0.215382   0.001993   0.217375   (0.217398) # (with 10 items)
+
 # find_with_hash          1.231883   0.001829   1.233712   (1.233743) # (with 4 items)
 # find_with_case          2.808220   0.003277   2.811497   (2.811524) # (with 4 items)
 # find_with_hash          1.233214   0.010597   1.243811   (1.243820) # (with 10 items)
