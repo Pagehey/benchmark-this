@@ -19,12 +19,31 @@ def empty_array
   end
 end
 
+##
+# this generates a custom method that looks like:
+#   def distinct_assigments
+#     arr = Array.new(100)
+#     arr[0] = 0
+#     arr[1] = 1
+#     arr[2] = 2
+#     arr[3] = 3
+#     arr[4] = 4
+#     # ... up to
+#     arr[99] = 99
+#
+#     return arr
+#   end
+#
+# This is obviously not realistic but the goal is to check
+# how each method can be optimized by Ruby compiler
+# This one is incredibly fast!
 assignments_string = NUMBERS.map.with_index {|n, i| "arr[#{i}] = #{n};" }.join
 eval(<<-RUBY)
   def distinct_assigments
     arr = Array.new(100)
     #{assignments_string}
-    arr
+
+    return arr
   end
 RUBY
 
