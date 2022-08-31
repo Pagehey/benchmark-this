@@ -2,6 +2,7 @@
 
 require "benchmark"
 require "benchmark-memory"
+require "benchmark/ips"
 
 EMPTY_ARRAY = [].freeze
 
@@ -15,23 +16,21 @@ end
 
 bench = lambda do |x|
   x.report(:error_with_stack) do
-    100_000.times do
-      error_with_stack
+    error_with_stack
 
-    rescue ArgumentError
-    end
+  rescue ArgumentError
   end
 
   x.report(:error_without_stack) do
-    100_000.times do
-      error_without_stack
+    error_without_stack
 
-    rescue ArgumentError
-    end
+  rescue ArgumentError
   end
+
+  x.compare!
 end
 
-Benchmark.bmbm(&bench)
+Benchmark.ips(&bench)
 Benchmark.memory(&bench)
 
 #                       user       system     total      real

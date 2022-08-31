@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-require "benchmark"
+require "benchmark/ips"
 require "benchmark-memory"
 require "date"
 
@@ -45,57 +45,59 @@ values = [
 
 bench = lambda do |x|
   x.report(:simple_find_with_hash) do
-    1_000_000.times do
-      value = rand(1..4)
-      SIMPLE_HASH_STORE[value]
-    end
+    value = rand(1..4)
+    SIMPLE_HASH_STORE[value]
   end
 
   x.report(:simple_find_with_case) do
-    1_000_000.times do
-      value = rand(1..4)
-      case value
-      when 1 then "result_1"
-      when 2 then "result_2"
-      when 3 then "result_3"
-      when 4 then "result_4"
-      when 5 then "result_5"
-      when 6 then "result_6"
-      when 7 then "result_7"
-      when 8 then "result_8"
-      when 9 then "result_9"
-      when 10 then "result_10"
-      end
+    value = rand(1..4)
+    case value
+    when 1 then "result_1"
+    when 2 then "result_2"
+    when 3 then "result_3"
+    when 4 then "result_4"
+    when 5 then "result_5"
+    when 6 then "result_6"
+    when 7 then "result_7"
+    when 8 then "result_8"
+    when 9 then "result_9"
+    when 10 then "result_10"
     end
   end
 
+  x.compare!
+end
+
+Benchmark.ips(&bench)
+Benchmark.memory(&bench)
+
+bench2 = lambda do |x|
   x.report(:find_with_hash) do
-    1_000_000.times do
-      value = values.sample
-      HASH_STORE[value]
-    end
+    value = values.sample
+    HASH_STORE[value]
   end
 
   x.report(:find_with_case) do
-    1_000_000.times do
-      value = values.sample
-      case value
-      when [Date.new(2022, 1, 1), 1] then "result_1"
-      when [Date.new(2022, 1, 2), 2] then "result_2"
-      when [Date.new(2022, 1, 3), 3] then "result_3"
-      when [Date.new(2022, 1, 4), 4] then "result_4"
-      when [Date.new(2022, 1, 5), 5] then "result_5"
-      when [Date.new(2022, 1, 6), 6] then "result_6"
-      when [Date.new(2022, 1, 7), 7] then "result_7"
-      when [Date.new(2022, 1, 8), 8] then "result_8"
-      when [Date.new(2022, 1, 9), 9] then "result_9"
-      when [Date.new(2022, 1, 10), 10] then "result_10"
-      end
+    value = values.sample
+    case value
+    when [Date.new(2022, 1, 1), 1] then "result_1"
+    when [Date.new(2022, 1, 2), 2] then "result_2"
+    when [Date.new(2022, 1, 3), 3] then "result_3"
+    when [Date.new(2022, 1, 4), 4] then "result_4"
+    when [Date.new(2022, 1, 5), 5] then "result_5"
+    when [Date.new(2022, 1, 6), 6] then "result_6"
+    when [Date.new(2022, 1, 7), 7] then "result_7"
+    when [Date.new(2022, 1, 8), 8] then "result_8"
+    when [Date.new(2022, 1, 9), 9] then "result_9"
+    when [Date.new(2022, 1, 10), 10] then "result_10"
     end
   end
+
+  x.compare!
 end
 
-Benchmark.bmbm(&bench)
+Benchmark.ips(&bench2)
+Benchmark.memory(&bench2)
 
 #                         user       system     total      real
 # simple_find_with_hash   0.236148   0.000654   0.236802   (0.236831) # (with 4 items)
