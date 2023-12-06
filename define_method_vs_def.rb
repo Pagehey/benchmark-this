@@ -2,66 +2,47 @@
 
 require 'benchmark'
 require "benchmark-memory"
+require "benchmark/ips"
+
 
 class A
   define_method :method_defined_with_defined_method do
-    2
+    "hi#{rand(1..9)}" * (2 * 1000)
   end
 
   def normally_defined_method
-    2
+    "hi#{rand(1..9)}" * (2 * 1000)
   end
 
   class_eval(<<-RUBY, __FILE__, __LINE__ + 1)
     def method_defined_with_class_eval
-      #{1 + 1}
+      "hi\#{rand(1..9)}" * (2 * 1000)
     end
   RUBY
 end
 
 a = A.new
 
-Benchmark.bmbm do |x|
+# raise("not same result") unless [a.normally_defined_method, a.method_defined_with_defined_method, a.method_defined_with_class_eval].uniq.count == 1
+
+block = proc do |x|
   x.report(:method_defined_with_defined_method) do
-    10_000_000.times do
-      a.method_defined_with_defined_method
-    end
+    a.method_defined_with_defined_method
   end
 
   x.report(:normally_defined_method) do
-    10_000_000.times do
-      a.normally_defined_method
-    end
+    a.normally_defined_method
   end
 
   x.report(:method_defined_with_class_eval) do
-    10_000_000.times do
-      a.method_defined_with_class_eval
-    end
-  end
-end
-
-Benchmark.memory do |x|
-  x.report(:method_defined_with_defined_method) do
-    10_000_000.times do
-      a.method_defined_with_defined_method
-    end
-  end
-
-  x.report(:normally_defined_method) do
-    10_000_000.times do
-      a.normally_defined_method
-    end
-  end
-
-  x.report(:method_defined_with_class_eval) do
-    10_000_000.times do
-      a.method_defined_with_class_eval
-    end
+    a.method_defined_with_class_eval
   end
 
   x.compare!
 end
+
+Benchmark.ips(&block)
+Benchmark.memory(&block)
 
 # Rehearsal ----------------------------------------------------------------------
 # method_defined_with_defined_method   0.985248   0.002157   0.987405 (  0.987600)
